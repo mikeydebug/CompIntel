@@ -6,6 +6,7 @@ import { TCBadge } from '@/components/TCBadge';
 import { LevelBadge } from '@/components/LevelBadge';
 import { formatTC } from '@/lib/format';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { CompanyScatterChart } from '@/components/CompanyScatterChart';
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -113,6 +114,8 @@ export default function CompanyDetailPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            
+            <CompanyScatterChart data={company.salaries} />
           </div>
 
           {/* Table */}

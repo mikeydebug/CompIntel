@@ -7,6 +7,7 @@ import { LevelBadge } from '@/components/LevelBadge';
 import { ChevronDown, ChevronUp, Search, Filter } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { formatTC } from '@/lib/format';
+import { SalaryDistributionChart } from '@/components/SalaryDistributionChart';
 
 export function SalariesClient() {
   const router = useRouter();
@@ -157,6 +158,8 @@ export function SalariesClient() {
             {loading ? 'Loading...' : `Found ${meta.total} entries`}
           </div>
         </div>
+
+        <SalaryDistributionChart data={data} />
 
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
           <table className="w-full text-left text-sm whitespace-nowrap">

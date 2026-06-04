@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { Building2, IndianRupee, MapPin, Users } from 'lucide-react';
+import { HomeChart } from '@/components/HomeChart';
 
 export default async function Home() {
-  const [totalEntries, companiesCount, citiesCount, topCompanies] = await Promise.all([
+  const [totalEntries, companiesCount, citiesCount, topCompanies, allSalaries] = await Promise.all([
     prisma.salaryEntry.count(),
     prisma.company.count(),
     prisma.salaryEntry.findMany({
@@ -14,8 +15,25 @@ export default async function Home() {
       include: { _count: { select: { salaries: true } } },
       orderBy: { salaries: { _count: 'desc' } },
       take: 8
+    }),
+    prisma.salaryEntry.findMany({
+      select: { standardLevel: true, totalComp: true }
     })
   ]);
+
+  // Process allSalaries to find median by standardLevel
+  const byLevel = allSalaries.reduce((acc, s) => {
+    if (!acc[s.standardLevel]) acc[s.standardLevel] = [];
+    acc[s.standardLevel].push(s.totalComp);
+    return acc;
+  }, {} as Record<number, number[]>);
+
+  const chartData = Object.keys(byLevel).map(l => {
+    const level = parseInt(l);
+    const tcList = byLevel[level].sort((a, b) => a - b);
+    const median = tcList.length ? tcList[Math.floor(tcList.length / 2)] : 0;
+    return { name: `L${level}`, median, level };
+  }).sort((a, b) => a.level - b.level);
 
   return (
     <div className="flex-1">
@@ -46,6 +64,8 @@ export default async function Home() {
               Add your salary
             </Link>
           </div>
+
+          {chartData.length > 0 && <HomeChart data={chartData} />}
         </div>
       </section>
 
