@@ -22,6 +22,9 @@ export function Navbar() {
           <Link href="/compare" className="hover:text-zinc-100 transition-colors">
             Compare
           </Link>
+          <Link href="/admin" className="hover:text-zinc-100 transition-colors">
+            Admin
+          </Link>
         </div>
 
         <div className="flex items-center gap-4 ml-auto">

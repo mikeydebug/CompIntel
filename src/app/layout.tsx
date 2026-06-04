@@ -15,8 +15,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CompIntel | Transparent Compensation Data",
-  description: "Compensation intelligence platform for Indian tech",
+  title: "CompIntel | Transparent Compensation Data for Indian Tech",
+  description: "Stop guessing your worth. Compare salaries, equity, and bonuses across top tech companies in India. Real compensation data standardized by level.",
+  keywords: ["salary", "compensation", "tech", "india", "sde", "software engineer", "levels"],
+  openGraph: {
+    title: "CompIntel | Transparent Compensation Data",
+    description: "Compare salaries, equity, and bonuses across top tech companies in India.",
+    type: "website",
+  }
 };
 
 export default function RootLayout({
