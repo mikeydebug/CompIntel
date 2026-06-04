@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  salaries      SalaryEntry[]
+  createdAt     DateTime      @default(now())
+}
+
+model Company {
+  id            String        @id @default(cuid())
+  name          String        @unique  // normalized: "Google"
+  slug          String        @unique  // "google"
+  aliases       String        // Stored as JSON string of array `["Google LLC"]` in SQLite (since SQLite doesn't support String[])
+  industry      String?
+  salaries      SalaryEntry[]
+  levels        LevelMap[]
+  createdAt     DateTime      @default(now())
+}
+
+model LevelMap {
+  id            String   @id @default(cuid())
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id])
+  internalLevel String   // "SDE-2", "E5", "Associate"
+  standardLevel Int      // 1-8 (L1=junior, L8=principal/fellow)
+  @@unique([companyId, internalLevel])
+}
+
+model SalaryEntry {
+  id            String   @id @default(cuid())
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id])
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+  role          String   // "Software Engineer"
+  internalLevel String   // "SDE-2"
+  standardLevel Int      // 4 (derived from LevelMap)
+  location      String   // "Bangalore"
+  baseSalary    Float    // in INR LPA
+  bonus         Float    @default(0)
+  equity        Float    @default(0) // annualized INR
+  totalComp     Float    // computed: base + bonus + equity
+  yearsExp      Int
+  yoe           Int?     // years of experience
+  verified      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([companyId])
+  @@index([standardLevel])
+  @@index([location])
+}
+
+// NextAuth required models
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? 
+  access_token       String? 
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? 
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
