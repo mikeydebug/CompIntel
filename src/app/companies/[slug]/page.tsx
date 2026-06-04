@@ -103,7 +103,7 @@ export default function CompanyDetailPage() {
                   <Tooltip 
                     cursor={{fill: '#27272a'}}
                     contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', borderRadius: '8px' }}
-                    formatter={(value: number) => formatTC(value)}
+                    formatter={(value: any) => formatTC(value as number)}
                   />
                   <Bar dataKey="p50" name="Median TC" radius={[4, 4, 0, 0]}>
                     {chartData.map((entry: any, index: number) => (

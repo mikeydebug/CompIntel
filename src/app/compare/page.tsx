@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { formatTC } from '@/lib/format';
 import { LevelBadge } from '@/components/LevelBadge';
 import { Search } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-export default function ComparePage() {
+function CompareClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const companiesParam = searchParams.get('companies') || '';
@@ -149,7 +149,7 @@ export default function ComparePage() {
                   <YAxis stroke="#a1a1aa" tickFormatter={(value) => formatTC(value)} />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', borderRadius: '8px' }}
-                    formatter={(value: number) => formatTC(value)}
+                    formatter={(value: any) => formatTC(value as number)}
                   />
                   <Legend />
                   {compareData.companies.map((c: any, index: number) => (
@@ -230,5 +230,13 @@ export default function ComparePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ComparePage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-zinc-500 animate-pulse">Loading comparison...</div>}>
+      <CompareClient />
+    </Suspense>
   );
 }
